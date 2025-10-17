@@ -121,9 +121,18 @@ Run the exact same playbook again and study the output. What is the difference?
 
 What does the `ansible.builtin.debug` module actually do?
 
+Svar:
+ansible.builtin.debug används för att skriva ut information under körningen av en playbook.
+Jag kan t.ex. använda den för att visa innehållet i en variabel eller ett meddelande, så jag kan se vad som händer utan att ändra något på servern.
+
 ## QUESTION B
 
 What is the variable 'ansible_facts' and where does it come from?
+
+Svar:
+ansible_facts är information (”facts”) som Ansible automatiskt samlar in om varje host innan den kör playbooken.
+Där finns t.ex. hostname, IP-adresser, OS-version, CPU och annat. Denna information används för att göra automationen smartare.
+
 
 ## QUESTION C
 
@@ -134,14 +143,21 @@ How do we now remove the software we installed through the playbook above? Make 
 playbook remove the exact same software we previously installed. Call the created
 playbook `03-uninstall-software.yml`.
 
+Svar:
+För att ta bort samma program jag installerade gör jag en ny playbook där jag använder state: absent istället för present.
+Det gör att Ansible avinstallerar programmen om de finns — och om jag kör den igen händer inget (idempotent).
+
 ## BONUS QUESTION
 
 What happens when you run `ansible-playbook` with different options?
 
 Explain what each of these options do:
-* --verbose, -vv, -vvv, -vvvv
-* --check
-* --syntax-check
+* --verbose, -vv, -vvv, -vvvv : Visar mer och mer detaljer om vad som händer. Bra vid felsökning.
+* --check: kör playbooken som en test utan att göra riktiga ändringar (dry-run).
+* --syntax-check: kontrollerar bara att playbooken är skriven korrekt (YAML och syntax) utan att köra den.
+
+
+
 
 ## Study Material & Documentation
 
