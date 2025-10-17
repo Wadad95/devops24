@@ -112,9 +112,21 @@ incompatibilities.
 
 What happens if you run `ansible-inventory --list` in the directory you created above?
 
+Svar:
+Ansible skriver ut hela inventoryt i JSON-format.
+
+Man får en strukturerad vy över alla grupper, hostar och variabler.
+
+Det här är användbart för att felsöka inventory.
+
 ## QUESTION B
 
 What happens if you run `ansible-inventory --graph` in the directory you created above?
+
+Svar:
+Man får en grafisk översikt i textform över grupper och hostar.
+
+Det hjälper att snabbt förstå strukturen.
 
 ## QUESTION C
 
@@ -131,6 +143,13 @@ Now run:
 Study the output of this command.
 
 What does the `ansible_connection=local` part mean?
+
+Svar:
+Det säger till Ansible att inte använda SSH för att ansluta till den här maskinen.
+
+I stället kör Ansible kommandon direkt på min lokala maskin.
+
+Praktiskt när man vill använda egen dator som controller och target samtidigt.
 
 ## BONUS QUESTION
 
@@ -153,3 +172,7 @@ In your Ansible working directory where the `ansible.cfg' is, run
 You should get a pager displaying all available configuration values. How does it differ
 from when you run the same command in your usual home directory?
 
+Svar:
+Jag använde ansible-config init för att skapa en fil som heter ansible.cfg.init och såg alla tillgängliga inställningar som man kan konfigurera i Ansible.
+När jag kör ansible-config dump i min arbetskatalog, visar den även de inställningar som jag har ändrat i min lokala ansible.cfg (t.ex. inventory och host_key_checking).
+Men när jag kör samma kommando i min hemkatalog, visas bara standardinställningarna, eftersom det inte finns någon lokal konfigurationsfil där.
