@@ -74,7 +74,15 @@ a number of keys and values that come from the output of the Ansible module.
 
 What does the output look like the first time you run this playbook?
 
+Svar:
+Första gången jag kör 05-web.yml kopieras files/https.conf till /etc/nginx/conf.d/https.conf. Tasken visar changed och handlern för nginx körs. I verbose-läget syns nycklar som changed, dest, owner, mode, checksum osv. (ser ut som JSON-liknande struktur). 
+
 What does the output look like the second time you run this playbook?
+
+Svar:
+Andra gången är filen redan likadan. Då visar tasken ok (ingen ändring) och ingen handler körs. Det här visar idempotens: inga onödiga ändringar när inget har ändrats
+
+
 
 # QUESTION B
 
@@ -114,12 +122,54 @@ Again, these addresses are just examples, make sure you use the IP of the actual
 Note also that `curl` needs the `--insecure` option to establish a connection to a HTTPS server with
 a self signed certificate.
 
+Svar:
+Jag ser till att nginx läser in den nya konfigurationen genom att starta om tjänsten via Ansible. Det bästa sättet är att låta copy-tasken notify:a en handler som gör restart — då sker omstart bara vid förändring.
+
+Exemple:
+      tasks:
+    - name: Copy nginx HTTPS config
+      ansible.builtin.copy:
+        src: files/https.conf
+        dest: /etc/nginx/conf.d/https.conf
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart nginx
+
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+
+
+Sedan verifierar jag att båda portarna funkar:
+
+
+curl -I http://192.168.121.42
+curl -k -I https://192.168.121.42
+
+Jag använder -k (eller --insecure) för att acceptera det självsignerade certifikatet, annars hade curl gett ett certifikatfel.
+
+
 # QUESTION C
 
 What is the disadvantage of having a task that _always_ makes sure a service is restarted, even if there is
 no configuration change?
 
+Svar:
+Nackdelen med att alltid starta om tjänsten även utan ändring är att det blir onödigt avbrott (downtime) och kan bryta pågående anslutningar. Det strider mot idempotens och kan skapa “flapping” samt rörigare loggar. Bättre att bara göra restart vid faktisk ändring (notify/handlers).
+
 # BONUS QUESTION
 
 There are at least two _other_ modules, in addition to the `ansible.builtin.service` module that can restart
 a `systemd` service with Ansible. Which modules are they?
+
+Svar:
+Två andra sätt (förutom ansible.builtin.service) att starta om en systemd-tjänst i Ansible är:
+
+ansible.builtin.systemd (dedikerad modul för systemd)
+
+ansible.builtin.command (eller shell) för att köra systemctl restart nginx direkt
+
+ 
