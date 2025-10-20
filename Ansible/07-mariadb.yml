@@ -1,0 +1,39 @@
+---
+
+- hosts: db
+  # anger vilken grupp av servrar (från inventory) som denna playbook ska köras på
+  # i detta fall körs den på alla servrar i gruppen "db"
+
+  become: true
+  # betyder att Ansible ska köra kommandona med root-behörighet (sudo)
+
+  tasks:
+    # här börjar listan med de uppgifter (tasks) som Ansible ska göra
+
+    - name: Ensure MariaDB-server is installed.
+      # "name" är en beskrivning av vad denna task gör, bara för läsbarhet
+
+      ansible.builtin.package:
+        # använder Ansible-modulen "package" (fungerar på de flesta Linux-distros)
+
+        name: mariadb-server
+        # anger namnet på paketet som ska installeras (MariaDB-servern)
+
+        state: present
+        # "present" betyder: paketet ska vara installerat
+        # (om det inte är installerat, installerar Ansible det)
+
+    - name: Ensure mariadb service is enabled and started
+
+      ansible.builtin.service:
+        # använder Ansible-modulen "service" för att hantera tjänster
+
+        name: mariadb
+        # anger vilken tjänst vi hanterar (MariaDB-tjänsten)
+
+        state: started
+        # ser till att tjänsten är igång just nu
+        # om den inte är igång — startar Ansible den
+
+        enabled: true
+        # ser till att tjänsten startar automatiskt vid systemstart (boot)
