@@ -1,0 +1,52 @@
+
+---
+- hosts: db
+  # anger vilken grupp av servrar (från inventory) som denna playbook ska köras på
+  become: true
+
+  # Lägg till community.mysql så vi får rätt moduler för MariaDB/MySQL
+  collections:
+    - community.mysql
+
+  vars:
+    # Enkla variabler så du lätt kan ändra namn/lösen
+    db_name: "webappdb"
+    db_user: "webappuser"
+    db_pass: "secretpassword"
+    # Root via UNIX-socket (vanligt på MariaDB)
+    mysql_socket: "/var/lib/mysql/mysql.sock"
+
+  tasks:
+    # 1) Se till att både servern OCH PyMySQL är installerade (PyMySQL krävs av modulerna)
+    - name: Ensure MariaDB server and PyMySQL are installed
+      ansible.builtin.package:
+        name:
+          - mariadb-server
+          - python3-PyMySQL
+        state: present
+
+    # 2) Starta/aktivera tjänsten
+    - name: Ensure mariadb service is enabled and started
+      ansible.builtin.service:
+        name: mariadb
+        state: started
+        enabled: true
+
+    # 3) Skapa databasen
+    - name: Create database {{ db_name }}
+      community.mysql.mysql_db:
+        name: "{{ db_name }}"
+        state: present
+        login_unix_socket: "{{ mysql_socket }}"
+
+    # 4) Skapa användaren och ge ALL på db_name.* från alla hosts (%)
+    - name: Create DB user {{ db_user }} with privileges on {{ db_name }}.*
+      community.mysql.mysql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_pass }}"
+        host: "%"
+        priv: "{{ db_name }}.*:ALL"
+        state: present
+        login_unix_socket: "{{ mysql_socket }}"
+        # Tillåt socket-root (ingen ~/.my.cnf krävs)
+        check_implicit_admin: true

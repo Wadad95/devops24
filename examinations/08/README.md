@@ -29,5 +29,20 @@ to authenticate as root:
 * Since we're authenticating through a socket, we should ignore the requirement for a `~/.my.cnf` file.
 * For simplicity's sake, let's grant `ALL` privileges on `webapp.*` to `webappuser`
 
+Svar:
+För att skapa databasen och användaren i MariaDB med Ansible:
+
+Jag installerade python3-PyMySQL på databasservern, eftersom det krävs för att community.mysql ska fungera.
+
+Jag använde community.mysql.mysql_db för att skapa databasen webappdb.
+
+Jag använde community.mysql.mysql_user för att skapa användaren webappuser med lösenord secretpassword.
+
+Jag gav användaren ALL-rättigheter på webapp.* enligt instruktionen.
+
+Jag använde login_unix_socket: /var/lib/mysql/mysql.sock och check_implicit_admin: true för att logga in som root utan ~/.my.cnf.
+
+Allt kördes automatiskt via en Ansible-playbook.
+
 # Documentation and Examples
 https://docs.ansible.com/ansible/latest/collections/community/mysql/index.html
