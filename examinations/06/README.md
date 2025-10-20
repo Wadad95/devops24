@@ -119,6 +119,16 @@ HINTS:
   also set the correct SELinux security context type on the directory and files. The context in question
   in this case should be `httpd_sys_content_t` for the `/var/www/example.internal/html/` directory.
 
+Svar:
+
+Jag har skapat katalogstrukturen /var/www/example.internal/html/ med modulen ansible.builtin.file.
+Jag har laddat upp index.html med modulen ansible.builtin.copy.
+Jag har satt rätt SELinux-typ (httpd_sys_content_t) så att nginx kan läsa filen.
+Filen hamnar i /var/www/example.internal/html/index.html.
+Ägare är nginx och rättigheter är 0755 för mappar och 0644 för filen.
+
+
+
 # QUESTION B
 
 To each of the tasks that change configuration files in the webserver, add a `register: [variable_name]`.
@@ -167,6 +177,13 @@ There are several ways to accomplish this, and there is no _best_ way to do this
 
 Is this a good way to handle these types of conditionals? What do you think?
 
+Svar:
+Jag har använt register för att spara om en task har ändrats eller inte.
+Sedan har jag använt .changed för att bara starta om nginx om något faktiskt ändrats.
+Det gör att servern inte startas om i onödan.
+Det är en bra metod i mindre projekt eftersom det är enkelt och tydligt.
+I större projekt kan man använda handlers, vilket är en mer flexibel lösning.
+
 # BONUS QUESTION
 
 Imagine you had a playbook with hundreds of tasks to be done on several hosts, and each one of these tasks
@@ -177,3 +194,26 @@ would you like the flow to work?
 
 Describe in simple terms what your preferred task flow would look like, not necessarily implemented in
 Ansible, but in general terms.
+
+Svar:
+Att använda register och .changed fungerar bra i små projekt, men i större projekt är det bättre att använda handlers.
+
+Med handlers kan flera tasks “säga till” att en tjänst ska startas om, men den startas bara en gång i slutet.
+Det gör koden enklare, snyggare och mer effektiv.
+Man slipper skriva långa when:-villkor på flera ställen.
+
+Exempel:
+
+Flera tasks kan ha notify: restart nginx
+
+Sedan har man en handler som gör själva service: name=nginx state=restarted
+
+Då sker omstarten automatiskt när det behövs.
+
+cd Fördelar med handlers:
+
+Mindre kod
+
+Tydligare struktur
+
+Bara en omstart även om flera tasks ändras

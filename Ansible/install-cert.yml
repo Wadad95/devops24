@@ -1,0 +1,35 @@
+---
+- name: Set up self-signed certificates for HTTPS
+  hosts: web
+  become: true
+
+  tasks:
+    - name: Ensure /etc/pki/nginx exists
+      ansible.builtin.file:
+        path: /etc/pki/nginx
+        state: directory
+        mode: "0755"
+        owner: root
+
+    - name: Ensure /etc/pki/nginx/private exists
+      ansible.builtin.file:
+        path: /etc/pki/nginx/private
+        state: directory
+        mode: "0700"
+        owner: root
+
+    - name: Ensure crypto dependency is present
+      ansible.builtin.package:
+        name: python3-cryptography
+        state: present
+
+    - name: Create private key
+      community.crypto.openssl_privatekey:
+        path: /etc/pki/nginx/private/server.key
+        mode: "0600"
+
+    - name: Create self-signed certificate
+      community.crypto.x509_certificate:
+        path: /etc/pki/nginx/server.crt
+        privatekey_path: /etc/pki/nginx/private/server.key
+        provider: selfsigned

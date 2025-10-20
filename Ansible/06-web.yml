@@ -1,0 +1,61 @@
+---
+- name: Uppgift 6 - Nginx virtual host example.internal
+  hosts: web
+  become: true
+
+  vars:
+    vhost_root: /var/www/example.internal/html
+    vhost_conf_dest: /etc/nginx/conf.d/example.internal.conf
+
+  tasks:
+    # 1) Kopiera vhost-konfigen för example.internal till nginx
+    - name: Ensure the nginx configuration is updated for example.internal
+      ansible.builtin.copy:
+        src: files/example.internal.conf   # ligger lokalt i ./files/
+        dest: "{{ vhost_conf_dest }}"      # hamnar på målservern
+        owner: root
+        group: root
+        mode: "0644"
+      register: vhost_conf_result
+
+    # 2) Skapa katalogstrukturen /var/www/example.internal/html/
+    - name: Create vhost document root directory tree
+      ansible.builtin.file:
+        path: "{{ vhost_root }}"
+        state: directory
+        owner: nginx        # nginx körs som användaren 'nginx' på många distros
+        group: nginx
+        mode: "0755"
+        recurse: true
+        setype: httpd_sys_content_t  # SELinux typ för statiskt webbinnehåll
+      register: vhost_dir_result
+
+    # 3) Ladda upp index.html till docroot
+    - name: Upload site index.html
+      ansible.builtin.copy:
+        src: files/index.html           # ligger lokalt i ./files/
+        dest: "{{ vhost_root }}/index.html"
+        owner: nginx
+        group: nginx
+        mode: "0644"
+        setype: httpd_sys_content_t
+      register: index_file_result
+
+    # (valfritt) Debugga vilka tasks som orsakade ändring
+    - name: Show change flags
+      ansible.builtin.debug:
+        msg:
+          - "vhost_conf_changed: {{ vhost_conf_result.changed }}"
+          - "vhost_dir_changed:  {{ vhost_dir_result.changed }}"
+          - "index_file_changed:  {{ index_file_result.changed }}"
+
+    # 4) Starta om/reloada nginx ENDAST om något faktiskt ändrats
+    - name: Restart nginx only if needed
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+      when: vhost_conf_result.changed
+            or vhost_dir_result.changed
+            or index_file_result.changed
+
+            

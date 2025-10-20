@@ -1,0 +1,20 @@
+---
+- name: Configure HTTPS for nginx
+  hosts: web
+  become: true
+
+  tasks:
+    - name: Copy nginx HTTPS config
+      ansible.builtin.copy:
+        src: files/https.conf
+        dest: /etc/nginx/conf.d/https.conf
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart nginx
+
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
