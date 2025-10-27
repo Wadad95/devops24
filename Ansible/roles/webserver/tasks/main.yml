@@ -1,0 +1,8 @@
+# tasks file for roles/webserver
+---
+- name: Kopiera enkel index.html till webbserver
+  ansible.builtin.copy:
+    src: index.html
+    dest: /usr/share/nginx/html/index.html
+    mode: "0644"
+  become: yes
