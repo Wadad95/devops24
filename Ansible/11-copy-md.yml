@@ -1,0 +1,31 @@
+---
+- hosts: db
+  become: true
+
+  tasks:
+    - name: Ensure deploy user's home directory exists
+      ansible.builtin.file:
+        path: /home/deploy #Målmapp på db-servern
+        state: directory  #Skapar katalogen om den inte finns
+        owner: deploy
+        group: deploy
+        mode: '0755'
+        # Den här tasken säkerställer att målkatalogen finns innan vi kopierar filer
+
+    - name: Copy all .md files from files/ to deploy's home directory
+      ansible.builtin.copy:
+        src: "{{ item }}"  #Filen som hittas i filsystemet lokalt
+        dest: /home/deploy/ #Plats filen kopieras på db-servern
+        owner: deploy
+        group: deploy
+        mode: '0644'
+      with_fileglob:
+        - "files/*.md"
+        # Denna task letar upp alla matchande filer och kopierar dem en efter en
+
+
+    - name: Display all matched .md files (just to check)
+      ansible.builtin.debug:
+        msg: "{{ lookup('ansible.builtin.fileglob', 'files/*.md') }}"
+         #  Här använder jag "lookup" för att bara skriva ut vilka filer som hittats.
+        #  Detta är väldigt bra för felsökning.

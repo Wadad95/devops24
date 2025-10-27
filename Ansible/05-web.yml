@@ -7,7 +7,7 @@
     - name: Copy nginx HTTPS config
       ansible.builtin.copy:
         src: files/https.conf
-        dest: /etc/nginx/conf.d/https.conf
+        dest: /etc/nginx/conf.d/https.conf  #den målmappen där nginx läser in sina konfigurationsfiler.
         owner: root
         group: root
         mode: "0644"

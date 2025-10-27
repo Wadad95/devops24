@@ -1,0 +1,26 @@
+---
+- hosts: web
+  become: true
+  vars_files:
+  - vars/password.yml
+
+  tasks:
+    - name: Ensure required groups exist
+      ansible.builtin.group:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ ['wheel','video','audio','tape','tcpdump'] }}"
+
+    - name: Add several users
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        state: present
+        groups: "{{ item.groups | join(',') }}"
+        password: "{{ common_pw_hash }}"     # Här används variabeln från Vault
+        update_password: on_create
+      loop:
+        - { name: 'alovelace', groups: ['wheel', 'video', 'audio'] }
+        - { name: 'aturing',   groups: ['tape'] }
+        - { name: 'edijkstra', groups: ['tcpdump'] }
+        - { name: 'ghopper',   groups: ['wheel', 'audio'] }
+
