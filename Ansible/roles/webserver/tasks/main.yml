@@ -1,8 +1,10 @@
-# tasks file for roles/webserver
 ---
-- name: Kopiera enkel index.html till webbserver
+- name: Kopiera nginx-konfig för HTTPS
   ansible.builtin.copy:
-    src: index.html
-    dest: /usr/share/nginx/html/index.html
+    src: https.conf
+    dest: /etc/nginx/conf.d/https.conf
+    owner: root
+    group: root
     mode: "0644"
+  notify: Ladda om nginx
   become: yes
