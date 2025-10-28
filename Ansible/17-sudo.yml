@@ -1,0 +1,19 @@
+---
+- name: Set password for deploy user
+  hosts: all 
+  become: true
+  tasks:
+    - name: Add deploy user to wheel group
+      ansible.builtin.user:
+        name: deploy
+        group: wheel
+        password: "$6$sFsXrjfLJsgtbYZ2$vPgncuwCLD2uAvb3rownBYXlYhaTyFOS44SFh30T8iouvwe8W60M9xbnfWdKxTlsJfkdv65CKkMDGQk6NkVuD/"
+        append: true
+
+    - name: remove passwordless from sudo in group wheel 
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%whell'
+        line: '^%whell ALL =(ALL) ALL'
+        validate: "visudo -cf %s"
