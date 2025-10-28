@@ -1,0 +1,72 @@
+---
+- name: 16 - CIS Security Compliance Checks (check-only)
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Gather installed packages
+      ansible.builtin.package_facts:
+        manager: auto
+
+    # Paket som inte ska vara installerade (exempel enligt CIS-anda)
+
+    - name: Assert telnet-server is NOT installed
+      ansible.builtin.assert:
+        that: "'telnet-server' not in ansible_facts.packages"
+        success_msg: "OK: telnet-server är inte installerat"
+        fail_msg: "FAIL: telnet-server är installerat (ta bort det enligt CIS)"
+
+    - name: Assert telnet is NOT installed
+      ansible.builtin.assert:
+        that: "'telnet' not in ansible_facts.packages"
+        success_msg: "OK: telnet är inte installerat"
+        fail_msg: "FAIL: telnet är installerat (ta bort det enligt CIS)"
+
+    - name: Assert rsh-server is NOT installed
+      ansible.builtin.assert:
+        that: "'rsh-server' not in ansible_facts.packages"
+        success_msg: "OK: rsh-server är inte installerat"
+        fail_msg: "FAIL: rsh-server är installerat (ta bort det enligt CIS)"
+
+    - name: Assert rsh is NOT installed
+      ansible.builtin.assert:
+        that: "'rsh' not in ansible_facts.packages"
+        success_msg: "OK: rsh är inte installerat"
+        fail_msg: "FAIL: rsh är installerat (ta bort det enligt CIS)"
+
+    - name: Assert ypbind is NOT installed
+      ansible.builtin.assert:
+        that: "'ypbind' not in ansible_facts.packages"
+        success_msg: "OK: ypbind är inte installerat"
+        fail_msg: "FAIL: ypbind är installerat (ta bort det enligt CIS)"
+
+    - name: Assert ypserv is NOT installed
+      ansible.builtin.assert:
+        that: "'ypserv' not in ansible_facts.packages"
+        success_msg: "OK: ypserv är inte installerat"
+        fail_msg: "FAIL: ypserv är installerat (ta bort det enligt CIS)"
+
+    - name: Assert tftp-server is NOT installed
+      ansible.builtin.assert:
+        that: "'tftp-server' not in ansible_facts.packages"
+        success_msg: "OK: tftp-server är inte installerat"
+        fail_msg: "FAIL: tftp-server är installerat (ta bort det enligt CIS)"
+
+    - name: Assert tftp is NOT installed
+      ansible.builtin.assert:
+        that: "'tftp' not in ansible_facts.packages"
+        success_msg: "OK: tftp är inte installerat"
+        fail_msg: "FAIL: tftp är installerat (ta bort det enligt CIS)"
+
+    - name: Assert xinetd is NOT installed
+      ansible.builtin.assert:
+        that: "'xinetd' not in ansible_facts.packages"
+        success_msg: "OK: xinetd är inte installerat"
+        fail_msg: "FAIL: xinetd är installerat (ta bort det enligt CIS)"
+
+    - name: Assert talk-server is NOT installed
+      ansible.builtin.assert:
+        that: "'talk-server' not in ansible_facts.packages"
+        success_msg: "OK: talk-server är inte installerat"
+        fail_msg: "FAIL: talk-server är installerat (ta bort det enligt CIS)"
