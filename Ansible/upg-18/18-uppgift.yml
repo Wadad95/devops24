@@ -1,0 +1,16 @@
+---
+- name: Use custom anagrammer module
+  hosts: localhost
+  gather_facts: false
+  vars:
+    message: "default message"
+  tasks:
+    - name: Run the anagrammer module
+      anagrammer:
+        message: "{{ message }}"
+      register: result
+
+    - name: Show result
+      debug:
+        var: result
+
