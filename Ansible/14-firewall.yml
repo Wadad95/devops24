@@ -14,7 +14,7 @@
       ansible.builtin.service:
         name: firewalld
         state: started
-        enabled: yes
+        enabled: true
 
     - name: Allow HTTP service
       ansible.posix.firewalld:
@@ -34,7 +34,6 @@
 - name: Configure firewall on database servers
   hosts: db
   become: true
-  
   tasks:
     - name: Install firewalld and python3-firewall
       ansible.builtin.package:
@@ -47,7 +46,7 @@
       ansible.builtin.service:
         name: firewalld
         state: started
-        enabled: yes
+        enabled: true
 
     - name: Allow MySQL service
       ansible.posix.firewalld:
