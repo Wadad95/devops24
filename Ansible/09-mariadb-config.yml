@@ -1,10 +1,10 @@
-
+---
 - name: Konfigurera MariaDB
   hosts: db
   become: true
 
   vars_files:
-    - vars/password.yml   # Här hämtar vi db_pass från en separat fil
+    - vars/password.yml  # Här hämtar vi db_pass från en separat fil
 
   vars:
     db_name: "webappdb"
@@ -19,7 +19,6 @@
           - mariadb-server
           - python3-PyMySQL
         state: present
-
 
     # 2) Starta/aktivera tjänsten
     - name: Ensure mariadb service is enabled and started

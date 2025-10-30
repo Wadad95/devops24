@@ -1,4 +1,32 @@
 ---
+- name: Se till att nginx är installerat och startat
+  ansible.builtin.package:
+    name: nginx
+    state: present
+  notify: Reload nginx
+
+- name: Aktivera och starta nginx-tjänsten
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Kopiera vhost-konfigurationen
+  ansible.builtin.copy:
+    src: files/example.internal.conf
+    dest: /etc/nginx/conf.d/example.internal.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload nginx
+
+- name: Skapa docroot
+  ansible.builtin.file:
+    path: /var/www/example.internal/html
+    state: directory
+    mode: "0755"
+    recurse: true
+
 - name: Kopiera nginx-konfig för HTTPS
   ansible.builtin.copy:
     src: https.conf
@@ -6,5 +34,4 @@
     owner: root
     group: root
     mode: "0644"
-  notify: Ladda om nginx
-  become: yes
+  notify: Reload nginx

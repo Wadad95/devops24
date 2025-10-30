@@ -1,7 +1,5 @@
 ---
-- name: Ladda om nginx
+- name: Reload nginx
   ansible.builtin.service:
     name: nginx
     state: reloaded
-  become: yes
-

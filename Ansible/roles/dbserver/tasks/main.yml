@@ -4,12 +4,9 @@
   ansible.builtin.package:
     name: mariadb-server
     state: present
-  become: yes
 
 - name: Starta och aktivera MariaDB-tjänsten
   ansible.builtin.service:
     name: mariadb
     state: started
     enabled: true
-  become: yes
-
